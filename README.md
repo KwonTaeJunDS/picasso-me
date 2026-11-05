@@ -1,5 +1,68 @@
 # Picasso Me
 
+**English** · [한국어](#한국어)
+
+A web app for filming yourself: it turns your face on the webcam into a live, Picasso-style cubist portrait. Turn your head and the frontal face and the profile merge into one face. Requirements are in [PRD.md](PRD.md) and the design is in [PLAN.md](PLAN.md) (both in Korean).
+
+## Run
+
+```bash
+npm install
+npm run dev
+```
+
+Open http://localhost:5173 in Chrome and allow camera access.
+
+- The face model is downloaded once from the internet (automatically by `npm run setup` or `npm run dev`). After that the app runs offline.
+- Video is processed only inside the browser and is never saved or sent anywhere. Requests to the p5 translation CDN and MediaPipe usage statistics are blocked, both on the main thread and in the detection worker.
+
+## Shortcuts
+
+| Key | Action |
+|---|---|
+| `H` | Open/close the control panel (closed at start) |
+| `C` | Save the current distance as the reference distance |
+| `F` | Fullscreen |
+
+Shortcuts also work while a Korean input method is active. The cursor hides after 2 seconds without mouse movement.
+
+## URL options (development and checks)
+
+| Address | Purpose |
+|---|---|
+| `/?mock` | Play a demo timeline without a camera. Add `&at=seconds` to start partway |
+| `/?mock=static&t=0.8&p=0&r=0&k=0&bl=0&br=0&jaw=0&face=1` | Freeze a fixed pose |
+| `/?detector=main` | Run face detection on the main thread instead of the worker (for comparison) |
+| `/?debugpose` | Print raw pose values (matrix, angles, signs) to the console once per second |
+| `/dev/gallery.html` | Grid preview of pose, distance, and expression combinations |
+| `/dev/selftest.html` | Check model and WASM loading and detection time (main/worker, GPU/CPU) |
+
+## First on-camera checklist
+
+Check these once in front of the camera and fix anything wrong in the panel. Changed values persist across runs.
+
+1. **Camera**: Is the webcam area at the top in color? If an IR (black-and-white) or virtual camera was picked, choose `LGE Camera` under Panel > 카메라 (Camera).
+2. **Turn direction**: When you turn your head left, does the painting turn the same way (as in a mirror)? If not, enable `yaw 반전` (invert yaw) under Panel > 각도 (Angles). Use `pitch 반전` for nodding and `roll 반전` for tilting.
+3. **Eyes**: When you close only your left eye, does the painting's left eye on screen close? If not, enable `눈 좌우 바꾸기` (swap eyes).
+4. **Distance**: After pressing `C` while facing the camera, does moving closer exaggerate the nose and eye spacing? If just turning your head in place causes distortion, compare the options under Panel > 거리 (Distance) > `거리 계산 방식` (distance method).
+5. **Performance**: Under Panel > 정보 (Info), check the FPS (target 60, minimum 30), that `검출 위치` (detector) shows worker, and the detection ms. Below 30 fps, lower 붓터치 (Brush) > `스트로크 겹수` (stroke layers) first.
+6. **Clean screen**: With the panel closed (`H`), is there no text at all on the recording screen?
+7. **Leave and return**: When you step out of frame, does the painting fade, and when you return, does it reappear as brushstrokes are painted in one by one?
+
+The panel labels are in Korean; the English names above are given in parentheses.
+
+## Tests
+
+```bash
+npm test
+```
+
+---
+
+# 한국어
+
+[English](#picasso-me) · **한국어**
+
 웹캠에 비친 얼굴을 실시간 피카소풍 입체파 초상으로 그리는 촬영용 웹앱이다. 요구사항은 [PRD.md](PRD.md), 설계는 [PLAN.md](PLAN.md)에 있다.
 
 ## 실행
