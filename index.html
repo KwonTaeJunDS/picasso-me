@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="dark" />
+    <title>Picasso Me</title>
+    <script>
+      // 외부 요청 차단: 인터넷 없이도 조용히 돌고, 영상 처리 외의 전송도 없게 한다 (PRD 8.1, 8.5).
+      //  - p5: 로드할 때 브라우저 언어(ko 등)용 번역 파일을 cdn.jsdelivr.net 에서 받으려 한다 (FES 메시지용이라 불필요)
+      //  - MediaPipe: 사용 통계를 odml.pa.googleapis.com 으로 주기적으로 보낸다 (영상은 아니지만 불필요)
+      // 모듈 스크립트보다 먼저 실행돼야 해서 index.html 안에 인라인으로 둔다.
+      (function () {
+        var realFetch = window.fetch;
+        if (!realFetch) return;
+        var blocked = /^https:\/\/(cdn\.jsdelivr\.net\/npm\/p5@|odml\.pa\.googleapis\.com\/)/;
+        window.fetch = function (input) {
+          var url = typeof input === 'string' ? input : input && (input.url || String(input));
+          if (blocked.test(url || '')) return Promise.reject(new TypeError('blocked external request'));
+          return realFetch.apply(this, arguments);
+        };
+      })();
+    </script>
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body>
+    <div id="stage"></div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

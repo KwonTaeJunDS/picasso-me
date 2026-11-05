@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>selftest — FaceLandmarker 로딩·검출 시간</title>
+    <script>
+      // index.html 과 같은 외부 요청 차단 (MediaPipe 사용 통계 전송 등). 오프라인 점검이 조용히 돌게 한다.
+      (function () {
+        var realFetch = window.fetch;
+        if (!realFetch) return;
+        var blocked = /^https:\/\/(cdn\.jsdelivr\.net\/npm\/p5@|odml\.pa\.googleapis\.com\/)/;
+        window.fetch = function (input) {
+          var url = typeof input === 'string' ? input : input && (input.url || String(input));
+          if (blocked.test(url || '')) return Promise.reject(new TypeError('blocked external request'));
+          return realFetch.apply(this, arguments);
+        };
+      })();
+    </script>
+    <style>
+      body {
+        margin: 16px;
+        background: #111;
+        color: #ddd;
+        font: 14px/1.5 Consolas, "Malgun Gothic", monospace;
+      }
+      h1 {
+        margin: 0 0 8px;
+        font-size: 16px;
+        font-weight: 600;
+      }
+      p {
+        margin: 0 0 12px;
+        color: #999;
+      }
+      pre {
+        margin: 0;
+        white-space: pre-wrap;
+      }
+      body[data-state="ok"] #state {
+        color: #6fdc8c;
+      }
+      body[data-state="fail"] #state {
+        color: #ff7b72;
+      }
+    </style>
+  </head>
+  <body data-state="running">
+    <h1>selftest <span id="state">실행 중…</span></h1>
+    <p>카메라 없이 로컬 자산(/wasm, /models)으로 FaceLandmarker 를 만들고, 빈 캔버스에 detectForVideo 를 반복해 시간을 잽니다. 결과는 콘솔과 window.__selftest 에도 있습니다.</p>
+    <pre id="out"></pre>
+    <script type="module" src="/dev/selftest.js"></script>
+  </body>
+</html>
